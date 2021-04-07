@@ -1,6 +1,22 @@
 #ifndef COMPLEXE_H
 #define COMPLEXE_H
 
+
+
+//#include <xmmintrin.h>
+
+/*
+#include <xmmintrin.h> //– SSE:
+#include <emmintrin.h> //– SSE:
+#include <pmmintrin.h> //– SSE3: 
+#include <tmmintrin.h> //– SSSE3:
+#include <smmintrin.h> //– SSE4.1:
+#include <nmmintrin.h> // – SSSE4.2:
+*/
+//dot, axpy, copy
+// __m128
+// __m128d 
+
 typedef struct {
   float real ;
   float imaginary ;
