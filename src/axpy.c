@@ -8,13 +8,16 @@
 */
 void mnblas_saxpy(const int N, const float alpha, const float *X, const int incX, float *Y, const int incY)
 {
-    register unsigned int i = 0;
-    register unsigned int j = 0;
+     unsigned int i = 0;
+//on part du postulat que incX = incY
+ /// register unsigned int maxIter = N/incX;  plus besoin de ça
+
+    #pragma omp parallel for
 
     for (i = 0; i < N; i += incX)
     {
-        Y[j] = alpha * X[i] + Y[j];
-        j += incY;
+        Y[i] = alpha * X[i] + Y[i];
+        i += incY;
     }
 }
 
@@ -23,13 +26,17 @@ void mnblas_saxpy(const int N, const float alpha, const float *X, const int incX
 */
 void mnblas_daxpy(const int N, const double alpha, const double *X, const int incX, double *Y, const int incY)
 {
-    register unsigned int i = 0;
-    register unsigned int j = 0;
+     unsigned int i = 0;
+    //on part du postulat que incX = incY
+  //register unsigned int maxIter = N/incX;     plus besoin de ça
+
+    #pragma omp parallel for
+
 
     for (i = 0; i < N; i += incX)
     {
-        Y[j] = alpha * X[i] + Y[j];
-        j += incY;
+        Y[i] = alpha * X[i] + Y[i];
+        i += incY;
     }
 }
 
@@ -38,14 +45,18 @@ void mnblas_daxpy(const int N, const double alpha, const double *X, const int in
 */
 void mnblas_caxpy(const int N, const void *alpha, const void *X, const int incX, void *Y, const int incY)
 {
-    register unsigned int i = 0;
-    register unsigned int j = 0;
+     unsigned int i = 0;
+    //on part du postulat que incX = incY
+  //register unsigned int maxIter = N/incX;     plus besoin de ça
+
+    #pragma omp parallel for
+
 
     for (i = 0; i < N; i += incX)
     {
         complexe_float_t mult_scalaire = mult_complexe_float(*(complexe_float_t *)alpha, ((complexe_float_t *)X)[i]);
-        ((complexe_float_t *)Y)[j] = add_complexe_float(mult_scalaire, ((complexe_float_t *)Y)[j]);
-        j += incY;
+        ((complexe_float_t *)Y)[i] = add_complexe_float(mult_scalaire, ((complexe_float_t *)Y)[i]);
+        i += incY;
     }
 }
 
@@ -55,12 +66,15 @@ void mnblas_caxpy(const int N, const void *alpha, const void *X, const int incX,
 void mnblas_zaxpy(const int N, const void *alpha, const void *X, const int incX, void *Y, const int incY)
 {
     register unsigned int i = 0;
-    register unsigned int j = 0;
+    //on part du postulat que incX = incY
+  //register unsigned int maxIter = N/incX;     plus besoin de ça
+
+    #pragma omp parallel for
 
     for (i = 0; i < N; i += incX)
     {
         complexe_double_t mult_scalaire = mult_complexe_double(*(complexe_double_t *)alpha, ((complexe_double_t *)X)[i]);
-        ((complexe_double_t *)Y)[j] = add_complexe_double(mult_scalaire, ((complexe_double_t *)Y)[j]);
-        j += incY;
+        ((complexe_double_t *)Y)[i] = add_complexe_double(mult_scalaire, ((complexe_double_t *)Y)[i]);
+        i += incY;
     }
 }

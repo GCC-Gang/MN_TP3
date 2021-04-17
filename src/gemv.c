@@ -63,6 +63,9 @@ void mncblas_sgemv(const MNCBLAS_LAYOUT layout, const MNCBLAS_TRANSPOSE TransA, 
     float y_temp[M];
     if ((layout == MNCblasRowMajor && TransA == MNCblasNoTrans) || (layout == MNCblasColMajor && (TransA == MNCblasTrans || TransA == MNCblasConjTrans)))
     {
+        #pragma omp parallel for private(y_temp, colonne) schedule (dynamic) //on fait les boucles for en parallèle et chacune à sa colonne et son y_temp
+        //on peut car chaque boucle agit sur une ligne différente de Y
+
         for (ligne = 0; ligne < M; ligne += incY)
         {
             y_temp[ligne] = 0.;
@@ -80,8 +83,13 @@ void mncblas_sgemv(const MNCBLAS_LAYOUT layout, const MNCBLAS_TRANSPOSE TransA, 
 
         for (ligne = 0; ligne < M; ligne += incY)
         {
+               
             y_temp[ligne] = 0.;
             indice_matrice = ligne;
+
+            #pragma omp parallel for private(y_temp, colonne) schedule (dynamic)//on fait les boucles for en parallèle et chacune à sa colonne et son y_temp
+                 //on peut car chaque boucle agit sur une ligne différente de Y
+
             for (colonne = 0; colonne < N; colonne += incX)
             {
                 y_temp[ligne] = y_temp[ligne] + A[indice_matrice] * alpha * X[colonne];
@@ -104,8 +112,14 @@ void mncblas_dgemv(MNCBLAS_LAYOUT layout, MNCBLAS_TRANSPOSE TransA, const int M,
     if ((layout == MNCblasRowMajor && TransA == MNCblasNoTrans) || (layout == MNCblasColMajor && (TransA == MNCblasTrans || TransA == MNCblasConjTrans)))
     {
         for (ligne = 0; ligne < M; ligne += incY)
-        {
+        { 
+            
             y_temp[ligne] = 0.;
+            
+            #pragma omp parallel for private(y_temp, colonne) schedule (dynamic)//on fait les boucles for en parallèle et chacune à sa colonne et son y_temp
+                 //on peut car chaque boucle agit sur une ligne différente de Y
+                 
+           
             for (colonne = 0; colonne < N; colonne += incX)
             {
                 y_temp[ligne] = y_temp[ligne] + A[indice_matrice] * alpha * X[colonne];
@@ -119,8 +133,13 @@ void mncblas_dgemv(MNCBLAS_LAYOUT layout, MNCBLAS_TRANSPOSE TransA, const int M,
 
         for (ligne = 0; ligne < M; ligne += incY)
         {
+
             y_temp[ligne] = 0.;
             indice_matrice = ligne;
+
+            #pragma omp parallel for private(y_temp, colonne) schedule (dynamic)//on fait les boucles for en parallèle et chacune à sa colonne et son y_temp
+                 //on peut car chaque boucle agit sur une ligne différente de Y
+            
             for (colonne = 0; colonne < N; colonne += incX)
             {
                 y_temp[ligne] = y_temp[ligne] + A[indice_matrice] * alpha * X[colonne];
@@ -147,10 +166,14 @@ void mncblas_cgemv(MNCBLAS_LAYOUT layout, MNCBLAS_TRANSPOSE TransA, const int M,
     {
         for (ligne = 0; ligne < M; ligne += incY)
         {
+
             y_temp[ligne].real = 0.;
             y_temp[ligne].imaginary = 0.;
             y_temp_colonne[ligne].real = 0.;
             y_temp_colonne[ligne].imaginary = 0.;
+
+            #pragma omp parallel for private(y_temp,y_temp_colonne,A_complexe, colonne) schedule (static, 8)//on fait les boucles for en parallèle et chacune à sa colonne et son y_temp
+                 //on peut car chaque boucle agit sur une ligne différente de Y
 
             for (colonne = 0; colonne < N; colonne += incX)
             {
@@ -184,6 +207,10 @@ void mncblas_cgemv(MNCBLAS_LAYOUT layout, MNCBLAS_TRANSPOSE TransA, const int M,
             y_temp[ligne].imaginary = 0.;
             y_temp_colonne[ligne].real = 0.;
             y_temp_colonne[ligne].imaginary = 0.;
+
+            #pragma omp parallel for private(y_temp, y_temp_colonne, A_complexe, colonne) schedule (static, 8)//on fait les boucles for en parallèle et chacune à sa colonne et son y_temp
+                 //on peut car chaque boucle agit sur une ligne différente de Y
+
             for (colonne = 0; colonne < N; colonne += incX)
             {
                 A_complexe[indice_matrice].real = ((complexe_float_t *)A)[indice_matrice].real;
@@ -227,6 +254,10 @@ void mncblas_zgemv(MNCBLAS_LAYOUT layout, MNCBLAS_TRANSPOSE TransA, const int M,
             y_temp[ligne].imaginary = 0.;
             y_temp_colonne[ligne].real = 0.;
             y_temp_colonne[ligne].imaginary = 0.;
+
+            #pragma omp parallel for private(y_temp, y_temp_colonne, A_complexe, colonne) schedule (static, 8)//on fait les boucles for en parallèle et chacune à sa colonne et son y_temp
+                 //on peut car chaque boucle agit sur une ligne différente de Y
+
             for (colonne = 0; colonne < N; colonne += incX)
             {
                 A_complexe[indice_matrice].real = ((complexe_double_t *)A)[indice_matrice].real;
@@ -258,6 +289,10 @@ void mncblas_zgemv(MNCBLAS_LAYOUT layout, MNCBLAS_TRANSPOSE TransA, const int M,
             y_temp_colonne[ligne].real = 0.;
             y_temp_colonne[ligne].imaginary = 0.;
             indice_matrice = ligne;
+
+            #pragma omp parallel for private(y_temp, y_temp_colonne, A_complexe, colonne) schedule (static, 8)//on fait les boucles for en parallèle et chacune à sa colonne et son y_temp
+                 //on peut car chaque boucle agit sur une ligne différente de Y
+                 
             for (colonne = 0; colonne < N; colonne += incX)
             {
                 A_complexe[indice_matrice].real = ((complexe_double_t *)A)[indice_matrice].real;

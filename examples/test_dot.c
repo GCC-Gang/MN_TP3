@@ -6,7 +6,7 @@
 
 #include "flop.h"
 
-#define VECSIZE 500
+#define VECSIZE 50000
 
 #define NB_FOIS 41943
 
@@ -71,7 +71,7 @@ int main(int argc, char **argv)
     res = mncblas_sdot(VECSIZE, vec1, 1, vec2, 1);
     end = _rdtsc();
 
-    printf("mncblas_sdot %d : res = %3.2f nombre de cycles: %Ld \n", i, res, end - start);
+    //printf("mncblas_sdot %d : res = %3.2f nombre de cycles: %Ld \n", i, res, end - start);
     somme_double += calcul_flop_ret("sdot ", 2 * VECSIZE, end - start);
   }
 
@@ -90,7 +90,7 @@ int main(int argc, char **argv)
     end = _rdtsc();
 
 
-    printf("mncblas_cdotu_sub %d : res = %3.2f +i %3.2f nombre de cycles: %Ld \n", i, resComplexe.real, resComplexe.imaginary, end - start);
+    //printf("mncblas_cdotu_sub %d : res = %3.2f +i %3.2f nombre de cycles: %Ld \n", i, resComplexe.real, resComplexe.imaginary, end - start);
 
     somme_double_cp += calcul_flop_ret("sdot ", 8 * VECSIZE, end - start);
   }
