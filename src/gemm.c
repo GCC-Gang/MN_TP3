@@ -87,6 +87,7 @@ C := alpha*op(A)*op(B) + beta*C
  float* transposition_float(const float* X, const int ligne,const int colonne,const int ldx){
     float* table2 = malloc(sizeof(float)*colonne*ligne);
     //float table2[colonne*ligne];
+    #pragma omp parallel for
         for(register int i = 0; i < ligne; ++i){
             for(register int j =0; j < colonne; ++j){
                 table2[i*ldx + j] = X[j*ldx + i];
@@ -98,6 +99,7 @@ C := alpha*op(A)*op(B) + beta*C
  double* transposition_double(const double* X, const int ligne,const int colonne,const int ldx){
     double* table2 = malloc(sizeof(float)*colonne*ligne);
     //double table2[colonne*ligne];
+        #pragma omp parallel for
         for(register int i = 0; i < ligne; ++i){
             for(register int j =0; j < colonne; ++j){
                 table2[i*ldx + j] = X[j*ldx + i];
@@ -110,8 +112,9 @@ C := alpha*op(A)*op(B) + beta*C
     complexe_float_t* table2 = malloc(sizeof(float)*colonne*ligne);
     //complexe_float_t table2[colonne*ligne];
     complexe_float_t* new_X = (complexe_float_t*) X;
+        #pragma omp parallel for
         for(register int i = 0; i < ligne; ++i){
-            for(register int j =0; j < colonne; ++j){
+                for(register int j =0; j < colonne; ++j){
                 table2[i*ldx + j].real = new_X[j*ldx + i].real;
                 table2[i*ldx + j].imaginary = new_X[j*ldx + i].imaginary;
 
@@ -124,6 +127,7 @@ C := alpha*op(A)*op(B) + beta*C
     complexe_double_t* table2 = malloc(sizeof(float)*colonne*ligne);
     //complexe_double_t table2[colonne*ligne];
     complexe_float_t* new_X = (complexe_float_t*) X;
+        #pragma omp parallel for
         for(register int i = 0; i < ligne; ++i){
             for(register int j =0; j < colonne; ++j){
                 table2[i*ldx + j].real = new_X[j*ldx + i].real;
@@ -138,6 +142,7 @@ C := alpha*op(A)*op(B) + beta*C
     complexe_float_t* table2 = malloc(sizeof(float)*colonne*ligne);
     //complexe_float_t table2[ligne*colonne];
     complexe_float_t* new_X = (complexe_float_t*)  X;
+        #pragma omp parallel for
         for(register int i = 0; i < ligne; ++i){
             for(register int j =0; j < colonne; ++j){
                 table2[i*ldx+j].real = new_X[j*ldx + i].real;
@@ -153,6 +158,7 @@ C := alpha*op(A)*op(B) + beta*C
     complexe_double_t* table2 = malloc(sizeof(float)*colonne*ligne);
     //complexe_double_t table2[ligne*colonne];
     complexe_double_t* new_X = (complexe_double_t*) X;
+        #pragma omp parallel for
         for(register int i = 0; i < ligne; ++i){
             for(register int j =0; j < colonne; ++j){
                 table2[i*ldx+j].real = new_X[j*ldx + i].real;
@@ -167,9 +173,10 @@ C := alpha*op(A)*op(B) + beta*C
 
 float* cpymat_f(const float* X, const int ligne, const int colonne, const int ldx){
     float* table2 = malloc(sizeof(float)*colonne*ligne);
-
+    #pragma omp parallel for
     for(register int i = 0; i < ligne; ++i){
         for(register int j =0; j < colonne; ++j){
+
             table2[i*ldx+j] = X[i*ldx+j];
         }
     }
@@ -178,6 +185,7 @@ float* cpymat_f(const float* X, const int ligne, const int colonne, const int ld
 
 double* cpymat_d(const double* X, const int ligne,const int colonne, const int ldx){
     double* table2 = malloc(sizeof(double)*colonne*ligne);
+    #pragma omp parallel for
     for(register int i = 0; i < ligne; ++i){
         for(register int j =0; j < colonne; ++j){
             table2[i*ldx+j] = X[i*ldx+j];
@@ -189,7 +197,7 @@ double* cpymat_d(const double* X, const int ligne,const int colonne, const int l
 complexe_float_t* cpymat_c(const void* X, const int ligne,const int colonne, const int ldx){
     complexe_float_t* table2 = malloc(sizeof(complexe_float_t)*colonne*ligne);
     const complexe_float_t* new_X = (complexe_float_t*) X;
-
+    #pragma omp parallel for
     for(register int i = 0; i < ligne; ++i){
         for(register int j =0; j < colonne; ++j){
             table2[i*ldx+j].real = new_X[i*ldx+j].real;
@@ -202,6 +210,7 @@ complexe_float_t* cpymat_c(const void* X, const int ligne,const int colonne, con
 complexe_double_t* cpymat_z(const void* X, const int ligne,const int colonne, const int ldx){
     complexe_double_t* table2 = malloc(sizeof(complexe_double_t)*colonne*ligne);
     const complexe_double_t* new_X = (complexe_double_t*) X;
+    #pragma omp parallel for
 
     for(register int i = 0; i < ligne; ++i){
         for(register int j =0; j < colonne; ++j){
@@ -264,10 +273,13 @@ void mncblas_sgemm(MNCBLAS_LAYOUT layout, MNCBLAS_TRANSPOSE TransA,
             //on multiplie A par son scalaire
 
             //on multiplie A par B et on ajoute beta*C
+                #pragma omp parallel for private(somme,j, k)
+
                 for(i = 0; i < M; ++i){
                     for(j = 0; j < N; ++j){
                         //C[i] *=beta;
                         somme = 0;
+           
                         for(k = 0; k < K; k++){
                             //lda represente taille ligne
                             //on multiplie A et B
@@ -278,10 +290,13 @@ void mncblas_sgemm(MNCBLAS_LAYOUT layout, MNCBLAS_TRANSPOSE TransA,
                 }
             }
         if(layout == MNCblasColMajor){
+            #pragma omp parallel for private(somme,j, k)
+
             for(i = 0; i < M; ++i){
                     for(j = 0; j < N; ++j){
                         //C[i] *=beta;
                         somme = 0;
+                     
                         for(k = 0; k < K; k++){
                             //lda represente taille ligne
                             //on multiplie A et B
@@ -293,6 +308,7 @@ void mncblas_sgemm(MNCBLAS_LAYOUT layout, MNCBLAS_TRANSPOSE TransA,
         }
 
         //il ne reste plus qu'a ajouter C correctement correpsond au + beta*C
+        #pragma omp parallel for
         for(f = 0; f < lg_C; ++f){
             C[f] *= beta;
             C[f] += table_tmp[f];
@@ -340,6 +356,7 @@ void mncblas_dgemm(MNCBLAS_LAYOUT layout, MNCBLAS_TRANSPOSE TransA,
             //on multiplie A par son scalaire
 
             //on multiplie A par B et on ajoute beta*C
+                #pragma omp parallel for private(somme,j, k)
                 for(i = 0; i < M; ++i){
                     for(j = 0; j < N; ++j){
                         //C[i] *=beta;
@@ -354,6 +371,8 @@ void mncblas_dgemm(MNCBLAS_LAYOUT layout, MNCBLAS_TRANSPOSE TransA,
                 }
             }
         if(layout == MNCblasColMajor){
+            #pragma omp parallel for private(somme,j, k)
+
             for(i = 0; i < M; ++i){
                     for(j = 0; j < N; ++j){
                         //C[i] *=beta;
@@ -369,6 +388,7 @@ void mncblas_dgemm(MNCBLAS_LAYOUT layout, MNCBLAS_TRANSPOSE TransA,
         }
 
         //il ne reste plus qu'a ajouter C correctement correpsond au + beta*C
+        #pragma omp parallel for
         for(f = 0; f < lg_C; ++f){
             C[f] *= beta;
             C[f] += table_tmp[f];
@@ -420,6 +440,7 @@ void mncblas_cgemm(MNCBLAS_LAYOUT layout, MNCBLAS_TRANSPOSE TransA,
             //on multiplie A par son scalaire
 
             //on multiplie A par B et on ajoute beta*C
+            #pragma omp parallel for private(tmp, somme, k)
             for(i = 0; i < M; ++i){
                 for(j = 0; j < N; ++j){
                     //C[i] *=beta;
@@ -438,6 +459,7 @@ void mncblas_cgemm(MNCBLAS_LAYOUT layout, MNCBLAS_TRANSPOSE TransA,
                 }
             }
         if(layout == MNCblasColMajor){
+            #pragma omp parallel for private(tmp, somme, k)
             for(i = 0; i < M; ++i){
                 for(j = 0; j < N; ++j){
                     //C[i] *=beta;
@@ -458,6 +480,7 @@ void mncblas_cgemm(MNCBLAS_LAYOUT layout, MNCBLAS_TRANSPOSE TransA,
         }
 
         //il ne reste plus qu'a ajouter C correctement correpsond au + beta*C
+        #pragma omp parallel for
         for(f = 0; f < lg_C; ++f){
             tmp.real = 0;
             tmp.imaginary = 0;
@@ -510,6 +533,7 @@ void mncblas_zgemm(MNCBLAS_LAYOUT layout, MNCBLAS_TRANSPOSE TransA,
             //on multiplie A par son scalaire
 
             //on multiplie A par B et on ajoute beta*C
+            #pragma omp parallel for private(tmp, somme, k)
             for(i = 0; i < M; ++i){
                 for(j = 0; j < N; ++j){
                     //C[i] *=beta;
@@ -528,6 +552,7 @@ void mncblas_zgemm(MNCBLAS_LAYOUT layout, MNCBLAS_TRANSPOSE TransA,
                 }
             }
         if(layout == MNCblasColMajor){
+            #pragma omp parallel for private(tmp, somme, k)
             for(i = 0; i < M; ++i){
                 for(j = 0; j < N; ++j){
                     //C[i] *=beta;
@@ -548,6 +573,7 @@ void mncblas_zgemm(MNCBLAS_LAYOUT layout, MNCBLAS_TRANSPOSE TransA,
         }
 
         //il ne reste plus qu'a ajouter C correctement correpsond au + beta*C
+        #pragma omp parallel for
         for(f = 0; f < lg_C; ++f){
             tmp.real = 0;
             tmp.imaginary = 0;
