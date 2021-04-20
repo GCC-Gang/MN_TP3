@@ -20,8 +20,8 @@ void mncblas_scopy(const int N, const __m128 *X, const int incX,
     return;
 }
 
-void mncblas_dcopy(const int N, const double *X, const int incX,
-                   double *Y, const int incY) {
+void mncblas_dcopy(const int N, const __m128d *X, const int incX,
+                   __m128d *Y, const int incY) {
     register unsigned int i = 0;
     //on part du postulat que incX = incY
 

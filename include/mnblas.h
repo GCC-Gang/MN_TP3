@@ -25,8 +25,8 @@ typedef enum {MNCblasLeft=141, MNCblasRight=142} MNCBLAS_SIDE;
 void mncblas_scopy(const int N, const __m128 *X, const int incX,
                  __m128 *Y, const int incY);
 
-void mncblas_dcopy(const int N, const double *X, const int incX,
-                 double *Y, const int incY);
+void mncblas_dcopy(const int N, const __m128d *X, const int incX,
+                 __m128d *Y, const int incY);
 
 
 void mncblas_ccopy(const int N, const void *X, const int incX,
