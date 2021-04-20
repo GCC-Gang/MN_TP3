@@ -73,6 +73,11 @@ inline complexe_float_t div_complexe_float(const complexe_float_t c1, const comp
 
     __m128 denominateur = _mm_sub_ps(_mm_mul_ps(c2.real, c2_conjuge.real), _mm_mul_ps(c2.imaginary, c2_conjuge.imaginary));
 
+    complexe_float_t nominateur = mult_complexe_float(c1, c2_conjuge);
+
+    div.real = _mm_div_ps(nominateur.real, denominateur);
+    div.imaginary = _mm_div_ps(nominateur.imaginary, denominateur);
+
     return div;
 }
 

@@ -10,6 +10,7 @@
 
 int main(int argc, char **argv)
 {
+    /*
   complexe_float_t c1 = {1.0, 2.0};
   complexe_float_t c2 = {3.0, 6.0};
   complexe_float_t c3;
@@ -104,4 +105,5 @@ int main(int argc, char **argv)
   calcul_flop("calcul complexe ", NB_FOIS * 4, end - start);
 
   exit(0);
+  */
 }
