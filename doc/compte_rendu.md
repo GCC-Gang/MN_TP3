@@ -7,3 +7,7 @@
 
 Le tableau ci-dessus montre nos résultats de performance du TP précédent. Le but de ce TP est d'améliorer ces performances
 en implémentant de la parallélisation par OpenMP et de la vectorisation.
+
+## OpenMp
+
+## Vectorisation
