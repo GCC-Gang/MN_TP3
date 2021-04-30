@@ -8,7 +8,7 @@
 
 #define VECSIZE    65536
 
-#define NB_FOIS    10
+#define NB_FOIS    10000
 
 typedef float vfloat [VECSIZE] ;
 typedef complexe_float_t vcomplexe[VECSIZE];
@@ -65,6 +65,9 @@ int main (int argc, char **argv)
  unsigned long long start, end ;
  register int i ;
 
+ float sum_scopy = 0;
+ float sum_ccopy = 0;
+
  init_flop () ;
 
  for (i = 0 ; i < NB_FOIS; i++)
@@ -76,7 +79,7 @@ int main (int argc, char **argv)
      end = _rdtsc () ;
 
      printf ("mncblas_scopy %d : nombre de cycles: %Ld \n", i, end-start) ;
-     calcul_byte ("scopy ", VECSIZE * sizeof(float), end-start) ;
+     sum_scopy += calcul_byte_swap("scopy ", VECSIZE * sizeof(float), end-start) ;
    }
 
    printf("=========================================\n");
@@ -89,7 +92,10 @@ int main (int argc, char **argv)
        end = _rdtsc () ;
 
        printf ("mncblas_ccopy %d : nombre de cycles: %Ld \n", i, end-start) ;
-       calcul_byte ("ccopy ", VECSIZE * sizeof(float) * 2, end-start) ;
+       sum_ccopy += calcul_byte_swap("ccopy ", VECSIZE * sizeof(float) * 2, end-start) ;
    }
+
+    printf("perf moyenne scopy : %f GBYTE/s\n", sum_scopy/ NB_FOIS);
+    printf("perf moyenne ccopy : %f GBYTE/s \n", sum_ccopy / NB_FOIS);
 
 }
