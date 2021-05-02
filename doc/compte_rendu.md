@@ -33,6 +33,8 @@ il est à noté que au départ nous n'avions pas forcément des résultats proba
 Le tableau ci-dessous, nous donnes d'ailleurs les chiffres relevés. Pour obtenir sex chiffres, nous avons fait une moyenne des differentes performances obtenus avec un jeu de donnée suffisament grand. Tous les test ont ét effectués sur le même ordinateur pour garantir la fiabilité des données.
 ![résultats obtenus](./pictures/resultat.JPG)
 
+Nous pouvons observer des gains de performance en général plus ou moins marqués en fonction des fonctions. Pour BLAS1, on voit que les meilleur performances sont atteintes avec des nombres complexes, et c'est AXPY qui à la meilleur amélioration de performances avec **4.46**. Les fonctions de BLAS2 et BLAS3 ont des amélioration plus nuancés mais néamoins notable alors que ces deux fonctions travaillent avec des jeux de données très conséquent, la moindre amélioration est donc à prendre. La fonction qui semble avoir le moins profité de la mise en place d'openMP semble être *gemv* avec une augmentation de 1.88 pour les type *simple précision* et de 1.43 pour les types *simple précision complexe*.
+
 ## Vectorisation
 
 Comme spécifié dans l'introduction, cette partie du TP est optionnel. Néanmoins, nous avons voulu voir le potentiel
