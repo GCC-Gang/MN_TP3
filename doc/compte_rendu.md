@@ -9,16 +9,27 @@ des algorithmes implémentés ou encore en utilisant des variables de type `regi
 
 Dans ce TP, nous continuerons à augmenter les performances des fonctions BLAS mais cette fois en utilisant les fonctionnalités
 offertes par le matériel. Nous allons tout d'abord répartir les calculs sur plusieurs threads, utilisant ainsi le plein
-potentiel du processeur. Nous allons ensuite vectoriser nos donnés, nous permettant ainsi de traité plusieurs variables
-à la fois. *Cette dernière partie étant optionnelle, seul une fonction n'a été vectorisé afin de voir les différences de 
+potentiel du processeur. Nous allons ensuite vectoriser nos donnés, nous permettant ainsi de traiter plusieurs variables
+à la fois. *Cette dernière partie étant optionnelle, seul une fonction a été vectorisé afin de voir les différences de 
 performance.*
 
 ## OpenMP
 
 La librairie OpenMP nous permet de faire du multi-threading sans avoir à utiliser les mutex et autres appels systèmes.
-Grâce à des primitives de type `#pragma [OPTION]`, nous pouvons facilement répartir certaine partie de l'exécution 
+Grâce à des primitives de type `#pragma omp [OPTION]`, nous pouvons facilement répartir certaine partie de l'exécution 
 sur plusieurs threads. Dans notre cas, ce sont les boucles sur des vecteurs et matrices de grande taille que nous allons 
 paralléliser.
+Dans notre cas, nous avons utiliser en majorité la primitive: `#pragma omp parallel for` qui permet de distribuer une boucle for sur plusieurs coeurs.
+Prenons l'exemple de dot.c, dans ce fichier il est question de mutliplier deux vecteurs. Pour améliorer les performances, nous avons donc utiliser une primitive de la forme:
+`  #pragma omp parallel for firstprivate(incX) reduction(+:dot)`
+Décorticons ce que çela signifie:
+* Déjà nous déclarons une primitive qui indique que l'on va utiliser plusieurs coeurs et que l'on va le faire sur une boucle for.
+* `firstprivate(variable)` est là pour indiquer que chaque thread aura sa variable *incX* et que cette dernière est initialisé au début. Dans notre cas, il est à noté que *incX* et *incY* sont identiques, nous avons donc remplacé *incY* par *incX*.
+* `reduction(op:X)` permet de dire que chaque thread aura sa propre variable *X* et qu'a la fin de l'execution, toutes les variables *X* seront réunis en une seul grâce à l'opérateur op. Dans notre cas, nous signifions donc que toutes les valeurs de dot seront additionés.
+
+il est à noté que au départ nous n'avions pas forcément des résultats probant, les performances étaient basse, après recherche de la cause, nous avons trouvés que que cela était dû à nos données qui étaient trop petites. En effet, il faut creer les threads donc si il y a peu de données à traiter, alors les performances ne seront pas au rendez-vous. De même, si les données sont trop grosses et qu'elles dépassent du cache, les performances s'en retrouverons également affectés. Normalement, dans notre cas, nous sommes arrivés au juste milieu, les données ne sont ni trop grandes, ni trop petites, et nous obtenons un gain de performances.
+Le tableau ci-dessous, nous donnes d'ailleurs les chiffres relevés. Pour obtenir sex chiffres, nous avons fait une moyenne des differentes performances obtenus avec un jeu de donnée suffisament grand. Tous les test ont ét effectués sur le même ordinateur pour garantir la fiabilité des données.
+![résultats obtenus](./pictures/resultat.JPG)
 
 ## Vectorisation
 
@@ -61,4 +72,4 @@ OpenMP.
 Lors du semestre 5, nous avons vu comment rendre un algorithme plus performant en en réduisant la complexité. Nous avons 
 notamment vu avec les tries la différence entre du O(n²) et du O(log n). L'algo avancé de ce semestre nous a montré qu'il 
 est possible d'obtenir des gains de performances considérables lors de l'implementation de ces algorithmes. Le multi-threading 
-et la vectorisation prennent avantage du matériel afin d'obtenir des programmes toujours plus rapides.
+et la vectorisation prennent avantage du matériel afin d'obtenir des programmes toujours plus rapides. D'autant plus qu'au niveau matériel, il est plus économique de rajouter des coeurs que de rajouter de la fréquence d'horloge. Lors de l'écriture d'algorithme, nous devrons donc dorénavant faire attention à rendre l'algorithme le moins complexe possible, ou à défaut gagner le plus possible en performance au niveau matériel.
