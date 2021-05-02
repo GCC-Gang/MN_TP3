@@ -24,7 +24,7 @@ Prenons l'exemple de dot.c, dans ce fichier il est question de mutliplier deux v
 
 `  #pragma omp parallel for firstprivate(incX) reduction(+:dot)`
 
-Décorticons ce que çela signifie:
+Décorticons ce que cela signifie:
 * Déjà nous déclarons une primitive qui indique que l'on va utiliser plusieurs coeurs et que l'on va le faire sur une boucle for.
 * `firstprivate(variable)` est là pour indiquer que chaque thread aura sa variable *incX* et que cette dernière est initialisé au début. Dans notre cas, il est à noté que *incX* et *incY* sont identiques, nous avons donc remplacé *incY* par *incX*.
 * `reduction(op:X)` permet de dire que chaque thread aura sa propre variable *X* et qu'a la fin de l'execution, toutes les variables *X* seront réunis en une seul grâce à l'opérateur op. Dans notre cas, nous signifions donc que toutes les valeurs de dot seront additionés.
