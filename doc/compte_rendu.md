@@ -21,7 +21,9 @@ sur plusieurs threads. Dans notre cas, ce sont les boucles sur des vecteurs et m
 paralléliser.
 Dans notre cas, nous avons utiliser en majorité la primitive: `#pragma omp parallel for` qui permet de distribuer une boucle for sur plusieurs coeurs.
 Prenons l'exemple de dot.c, dans ce fichier il est question de mutliplier deux vecteurs. Pour améliorer les performances, nous avons donc utiliser une primitive de la forme:
+
 `  #pragma omp parallel for firstprivate(incX) reduction(+:dot)`
+
 Décorticons ce que çela signifie:
 * Déjà nous déclarons une primitive qui indique que l'on va utiliser plusieurs coeurs et que l'on va le faire sur une boucle for.
 * `firstprivate(variable)` est là pour indiquer que chaque thread aura sa variable *incX* et que cette dernière est initialisé au début. Dans notre cas, il est à noté que *incX* et *incY* sont identiques, nous avons donc remplacé *incY* par *incX*.
